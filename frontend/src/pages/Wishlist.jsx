@@ -1,4 +1,4 @@
-// pages/Wishlist.jsx
+
 import { Link } from "react-router-dom";
 import useWishlistStore from "../store/wishlistStore";
 import PageWrapper from "../components/PageWrapper";

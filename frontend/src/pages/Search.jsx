@@ -35,10 +35,11 @@ const Search = () => {
 
       <div className="mb-6 flex items-center justify-between">
         <span>{products.length} items found</span>
+        
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value)}
-          className="border px-3 py-2 rounded"
+          className="border rounded p-2 bg-white text-black dark:bg-zinc-800 dark:text-white dark:border-gray-700"
         >
           <option value="default">Sort by</option>
           <option value="low">Price: Low to High</option>

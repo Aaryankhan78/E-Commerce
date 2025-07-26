@@ -4,19 +4,27 @@ import { Heart } from "lucide-react";
 import useWishlistStore from "../store/wishlistStore";
 
 const ProductCard = ({ product, view }) => {
-  const wishlist = useWishlistStore((state) => state.wishlist);
-  const addToWishlist = useWishlistStore((state) => state.addToWishlist);
-  const removeFromWishlist = useWishlistStore((state) => state.removeFromWishlist);
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
 
-  const isWishlisted = wishlist.some((item) => item.id === product.id);
+  const productId = product?.id || product?._id || null;
+  const isWishlisted = wishlist.some((item) => item.id === productId);
 
   const toggleWishlist = () => {
+    if (!productId) return;
     if (isWishlisted) {
-      removeFromWishlist(product.id);
+      removeFromWishlist(productId);
     } else {
-      addToWishlist(product);
+      addToWishlist({ ...product, id: productId });
     }
   };
+
+  // Handle thumbnail path (supports backend paths or URLs)
+  const isExternal = product?.thumbnail?.startsWith("http");
+  const thumbnail = product?.thumbnail
+    ? isExternal
+      ? product.thumbnail
+      : `/uploads/${product.thumbnail}` // for server-stored images
+    : "/fallback.jpg";
 
   return (
     <div
@@ -26,19 +34,24 @@ const ProductCard = ({ product, view }) => {
         }`}
     >
       <img
-        src={product.thumbnail}
-        alt={product.title}
+        src={thumbnail}
+        alt={product?.title || "Product"}
         className={`object-cover ${view === "list" ? "w-40 h-40" : "w-full h-56"}`}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = "/fallback.jpg";
+        }}
       />
 
       <div className="p-4 flex-1">
-        <h3 className="text-lg font-semibold">{product.title}</h3>
+        <h3 className="text-lg font-semibold">{product?.title || "No title"}</h3>
         <p className="text-gray-600 dark:text-gray-300">
-          {formatPrice(product.price)}
+          {typeof product?.price === "number"
+            ? formatPrice(product.price)
+            : formatPrice(0)}
         </p>
-
         <Link
-          to={`/product/${product.id}`}
+          to={`/product/${productId}`}
           className="inline-block mt-2 text-indigo-600 dark:text-indigo-400 hover:underline"
         >
           View Details

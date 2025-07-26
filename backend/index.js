@@ -3,10 +3,10 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
-// Import Routes
+// ✅ Import Routes
 import paymentRoutes from './routes/paymentRoutes.js';
-import authRoutes from './routes/authRoutes.js'; // ✅ works now
- // ✅ NEW
+import authRoutes from './routes/authRoutes.js';
+import aiRoutes from './routes/aiRoutes.js'; // AI route (Gemini)
 
 dotenv.config();
 
@@ -19,9 +19,10 @@ app.use(express.json());
 
 // ✅ Routes
 app.use('/api/payment', paymentRoutes);
-app.use('/api/auth', authRoutes); // ✅ NEW
+app.use('/api/auth', authRoutes);
+app.use('/api/ai', aiRoutes); // Gemini AI route
 
-// ✅ Connect to MongoDB and Start Server
+// ✅ MongoDB Connection and Server Start
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

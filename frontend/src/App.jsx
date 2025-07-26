@@ -3,8 +3,11 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import { useThemeStore } from './store/themeStore';
 
+// Components
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 
+// Pages
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
@@ -15,20 +18,20 @@ import Search from './pages/Search';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import TestPayment from './pages/TestPayment';
-import ProtectedRoute from './components/ProtectedRoute';
 import Wishlist from './pages/Wishlist';
+import AIRecommendationsPage from './pages/AIRecommendationsPage';
+import About from './pages/About';           // ✅ New
+import Contact from './pages/Contact';       // ✅ New
 
 const App = () => {
   const token = useAuthStore((state) => state.token);
   const hasHydrated = useAuthStore.persist.hasHydrated();
   const darkMode = useThemeStore((state) => state.darkMode);
 
-  // Apply dark mode class to <html>
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
 
-  // Wait for Zustand to rehydrate from localStorage
   if (!hasHydrated) return null;
 
   return (
@@ -36,61 +39,24 @@ const App = () => {
       {token && <Navbar />}
 
       <Routes>
-        {/* Redirect to Register if not logged in */}
-        <Route
-          path="/"
-          element={token ? <Navigate to="/home" /> : <Navigate to="/register" />}
-        />
+        {/* Public Routes */}
+        <Route path="/" element={<Navigate to={token ? "/home" : "/register"} />} />
+        <Route path="/login" element={token ? <Navigate to="/home" /> : <Login />} />
+        <Route path="/register" element={token ? <Navigate to="/home" /> : <Register />} />
+        <Route path="/about" element={<About />} />           {/* ✅ Public */}
+        <Route path="/contact" element={<Contact />} />       {/* ✅ Public */}
 
-        {/* Auth routes */}
-        <Route
-          path="/login"
-          element={token ? <Navigate to="/home" /> : <Login />}
-        />
-        <Route
-          path="/register"
-          element={token ? <Navigate to="/home" /> : <Register />}
-        />
-
-        {/* Protected routes */}
-        <Route
-          path="/home"
-          element={<ProtectedRoute><Home /></ProtectedRoute>}
-        />
-        <Route
-          path="/products"
-          element={<ProtectedRoute><Products /></ProtectedRoute>}
-        />
-        <Route
-          path="/product/:id"
-          element={<ProtectedRoute><ProductDetail /></ProtectedRoute>}
-        />
-        <Route
-          path="/cart"
-          element={<ProtectedRoute><Cart /></ProtectedRoute>}
-        />
-        <Route
-          path="/checkout"
-          element={<ProtectedRoute><Checkout /></ProtectedRoute>}
-        />
-        <Route
-          path="/success"
-          element={<ProtectedRoute><Success /></ProtectedRoute>}
-        />
-        <Route
-          path="/search"
-          element={<ProtectedRoute><Search /></ProtectedRoute>}
-        />
-        <Route
-          path="/test-payment"
-          element={<ProtectedRoute><TestPayment /></ProtectedRoute>}
-        />
-        <Route
-          path="/wishlist"
-          element={<ProtectedRoute><Wishlist /></ProtectedRoute>}
-        />
-        
-
+        {/* Protected Routes */}
+        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+        <Route path="/product/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />
+        <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
+        <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+        <Route path="/test-payment" element={<ProtectedRoute><TestPayment /></ProtectedRoute>} />
+        <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+        <Route path="/ai-recommendations" element={<ProtectedRoute><AIRecommendationsPage /></ProtectedRoute>} />
       </Routes>
     </div>
   );
